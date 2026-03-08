@@ -47,7 +47,7 @@ export default function Sidebar({ profile }: SidebarProps) {
     <div className="flex flex-col h-screen w-64 bg-gray-900 text-white">
       {/* Logo */}
       <div className="flex items-center justify-center h-16 bg-gray-800">
-        <h1 className="text-xl font-bold">IT System</h1>
+        <h1 className="text-xl font-bold">Think Safe Service Hub</h1>
       </div>
 
       {/* User Info */}

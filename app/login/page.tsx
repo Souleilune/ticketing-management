@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { LogIn, Mail, Lock, Sparkles, AlertCircle } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -19,93 +20,114 @@ export default function LoginPage() {
     setLoading(true)
 
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       })
 
-      if (error) throw error
+      if (signInError) {
+        setError(signInError.message)
+        return
+      }
 
       router.push('/dashboard')
       router.refresh()
-    } catch (error: any) {
-      setError(error.message || 'Failed to login')
+    } catch (err) {
+      setError('An unexpected error occurred')
     } finally {
       setLoading(false)
     }
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            IT Ticketing System
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Sign in to your account
-          </p>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-primary-50 via-white to-secondary-50">
+      <div className="w-full max-w-md">
+        {/* Logo */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-primary-500 to-secondary-500 shadow-lg mb-4">
+            <Sparkles className="h-8 w-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gradient">ThinkSafe Service Hub</h1>
+          <p className="text-neutral-600 mt-2">Sign in to manage your tickets</p>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleLogin}>
-          {error && (
-            <div className="rounded-md bg-red-50 p-4">
-              <p className="text-sm text-red-800">{error}</p>
-            </div>
-          )}
-          <div className="rounded-md shadow-sm -space-y-px">
+
+        {/* Login Form */}
+        <div className="card">
+          <form onSubmit={handleLogin} className="space-y-6">
+            {/* Error Alert */}
+            {error && (
+              <div className="p-4 bg-accent-50 rounded-xl flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-accent-600 flex-shrink-0 mt-0.5" />
+                <p className="text-sm text-accent-700 font-medium">{error}</p>
+              </div>
+            )}
+
+            {/* Email Field */}
             <div>
-              <label htmlFor="email" className="sr-only">
-                Email address
+              <label className="block text-sm font-semibold text-neutral-700 mb-2">
+                Email Address
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <div className="relative">
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input pl-11"
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
             </div>
+
+            {/* Password Field */}
             <div>
-              <label htmlFor="password" className="sr-only">
+              <label className="block text-sm font-semibold text-neutral-700 mb-2">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-primary-500 focus:border-primary-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-neutral-400" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input pl-11"
+                  placeholder="Enter your password"
+                  required
+                />
+              </div>
             </div>
-          </div>
 
-          <div>
+            {/* Submit Button */}
             <button
               type="submit"
               disabled={loading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full btn btn-primary flex items-center justify-center gap-2"
             >
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? (
+                <>
+                  <div className="loading-spinner h-5 w-5"></div>
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  <LogIn className="h-5 w-5" />
+                  Sign In
+                </>
+              )}
             </button>
-          </div>
+          </form>
 
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
+          {/* Register Link */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-neutral-600">
               Don't have an account?{' '}
-              <Link href="/register" className="font-medium text-primary-600 hover:text-primary-500">
-                Register here
+              <Link href="/register" className="font-semibold text-primary-600 hover:text-primary-700">
+                Create one
               </Link>
             </p>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   )

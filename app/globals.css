@@ -4,36 +4,110 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gradient-to-br from-primary-50 via-white to-secondary-50 text-neutral-800;
   }
 }
 
 @layer components {
   .btn {
-    @apply px-4 py-2 rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2;
+    @apply px-5 py-2.5 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-offset-0 shadow-sm;
   }
 
   .btn-primary {
-    @apply bg-primary-600 text-white hover:bg-primary-700 focus:ring-primary-500;
+    @apply bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-primary-700 focus:ring-primary-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
   }
 
   .btn-secondary {
-    @apply bg-gray-200 text-gray-900 hover:bg-gray-300 focus:ring-gray-500;
+    @apply bg-gradient-to-r from-secondary-500 to-secondary-600 text-white hover:from-secondary-600 hover:to-secondary-700 focus:ring-secondary-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
   }
 
   .btn-danger {
-    @apply bg-red-600 text-white hover:bg-red-700 focus:ring-red-500;
+    @apply bg-gradient-to-r from-accent-500 to-accent-600 text-white hover:from-accent-600 hover:to-accent-700 focus:ring-accent-200 shadow-md hover:shadow-lg transform hover:-translate-y-0.5;
+  }
+
+  .btn-ghost {
+    @apply bg-white/80 backdrop-blur-sm text-neutral-700 hover:bg-white hover:text-neutral-900 focus:ring-neutral-200 shadow-sm;
   }
 
   .input {
-    @apply w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full px-4 py-2.5 bg-white/90 backdrop-blur-sm rounded-xl focus:outline-none focus:ring-4 focus:ring-primary-200 transition-all duration-200 placeholder-neutral-400 text-neutral-700 shadow-sm;
   }
 
   .card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200 p-6;
+    @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 p-6;
   }
 
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold shadow-sm;
+  }
+
+  .stat-card {
+    @apply bg-gradient-to-br from-white to-white/80 backdrop-blur-sm rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 p-6 transform hover:-translate-y-1;
+  }
+
+  .sidebar-link {
+    @apply flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all duration-200;
+  }
+
+  .sidebar-link-active {
+    @apply bg-gradient-to-r from-primary-100 to-primary-50 text-primary-700 shadow-md;
+  }
+
+  .sidebar-link-inactive {
+    @apply text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900;
+  }
+
+  .table-container {
+    @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-lg overflow-hidden;
+  }
+
+  .table-header {
+    @apply bg-gradient-to-r from-neutral-50 to-white px-6 py-4 text-left text-xs font-bold text-neutral-600 uppercase tracking-wider;
+  }
+
+  .table-row {
+    @apply bg-white hover:bg-gradient-to-r hover:from-primary-50 hover:to-transparent transition-all duration-150;
+  }
+
+  .form-section {
+    @apply space-y-6 bg-white/90 backdrop-blur-sm rounded-2xl p-8 shadow-lg;
+  }
+
+  .page-header {
+    @apply mb-8 flex items-center justify-between;
+  }
+
+  .page-title {
+    @apply text-3xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold text-neutral-800 mb-4;
+  }
+
+  .empty-state {
+    @apply text-center py-16 px-4 bg-white/80 backdrop-blur-sm rounded-2xl;
+  }
+
+  .loading-spinner {
+    @apply animate-spin rounded-full border-4 border-primary-200 border-t-primary-600;
+  }
+}
+
+@layer utilities {
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
+  }
+
+  .bg-glass {
+    @apply bg-white/90 backdrop-blur-sm;
+  }
+
+  .shadow-soft {
+    box-shadow: 0 4px 20px rgba(255, 112, 67, 0.08), 0 2px 6px rgba(14, 165, 233, 0.06);
+  }
+
+  .shadow-soft-lg {
+    box-shadow: 0 10px 40px rgba(255, 112, 67, 0.12), 0 4px 12px rgba(14, 165, 233, 0.08);
   }
 }

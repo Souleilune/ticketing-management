@@ -1,75 +1,59 @@
 import { createClient } from '@/lib/supabase/server'
+import { redirect } from 'next/navigation'
 import DashboardStats from '@/components/dashboard/DashboardStats'
 import RecentTickets from '@/components/dashboard/RecentTickets'
+import { Activity } from 'lucide-react'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
 
-  try {
-    // Fetch dashboard statistics with error handling
-    const [
-      ticketsResult,
-      openResult,
-      inProgressResult,
-      resolvedResult,
-      devicesResult,
-      maintenanceResult,
-      recentResult,
-    ] = await Promise.all([
-      supabase.from('tickets').select('*', { count: 'exact', head: true }),
-      supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'open'),
-      supabase.from('tickets').select('*', { count: 'exact', head: true }).eq('status', 'in_progress'),
-      supabase.from('tickets').select('*', { count: 'exact', head: true }).in('status', ['resolved', 'closed']),
-      supabase.from('devices').select('*', { count: 'exact', head: true }),
-      supabase.from('devices').select('*', { count: 'exact', head: true }).eq('status', 'maintenance'),
-      supabase
-        .from('tickets')
-        .select('*, created_by, assigned_to')
-        .order('created_at', { ascending: false })
-        .limit(5),
-    ])
-
-    const stats = {
-      totalTickets: ticketsResult.count || 0,
-      openTickets: openResult.count || 0,
-      inProgressTickets: inProgressResult.count || 0,
-      resolvedTickets: resolvedResult.count || 0,
-      totalDevices: devicesResult.count || 0,
-      devicesUnderMaintenance: maintenanceResult.count || 0,
-    }
-
-    // Fetch user profiles for recent tickets if they exist
-    const recentTickets = recentResult.data || []
-    
-    return (
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="mt-2 text-gray-600">Think Safe IT Service Hub</p>
-        </div>
-
-        <div className="space-y-8">
-          <DashboardStats stats={stats} />
-          <RecentTickets tickets={recentTickets} />
-        </div>
-      </div>
-    )
-  } catch (error) {
-    console.error('Dashboard error:', error)
-    return (
-      <div className="p-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="mt-2 text-gray-600">Think Safe IT Service Hub</p>
-        </div>
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-          <h3 className="text-lg font-semibold text-yellow-800 mb-2">Loading Dashboard</h3>
-          <p className="text-yellow-700">Setting up your dashboard. This may take a moment...</p>
-          <pre className="mt-4 text-xs text-gray-600 overflow-auto">
-            {error instanceof Error ? error.message : 'Unknown error'}
-          </pre>
-        </div>
-      </div>
-    )
+  const { data: { user } } = await supabase.auth.getUser()
+  
+  if (!user) {
+    redirect('/login')
   }
+
+  // Fetch statistics
+  const { data: tickets } = await supabase
+    .from('tickets')
+    .select('status')
+
+  const { data: devices } = await supabase
+    .from('devices')
+    .select('status')
+
+  const stats = {
+    totalTickets: tickets?.length || 0,
+    openTickets: tickets?.filter(t => t.status === 'open').length || 0,
+    inProgressTickets: tickets?.filter(t => t.status === 'in_progress').length || 0,
+    resolvedTickets: tickets?.filter(t => t.status === 'resolved').length || 0,
+    totalDevices: devices?.length || 0,
+    devicesUnderMaintenance: devices?.filter(d => d.status === 'maintenance').length || 0,
+  }
+
+  return (
+    <div className="min-h-screen p-8">
+      {/* Header */}
+      <div className="page-header">
+        <div>
+          <h1 className="page-title flex items-center gap-3">
+            <Activity className="h-9 w-9 text-primary-600" />
+            Dashboard
+          </h1>
+          <p className="text-neutral-600 mt-2 text-sm">Welcome back! Here's what's happening today.</p>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="mb-8">
+        <DashboardStats stats={stats} />
+      </div>
+
+      {/* Recent Activity */}
+      <div className="mt-8">
+        <h2 className="section-title">Recent Activity</h2>
+        <RecentTickets />
+      </div>
+    </div>
+  )
 }

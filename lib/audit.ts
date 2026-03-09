@@ -33,10 +33,11 @@ export async function createAuditLog(
     })
 
     if (error) {
-      console.error('Failed to create audit log:', error)
+      // Silent fail for audit logs - don't block user actions
+      // In production, you might want to send this to a logging service
     }
   } catch (error) {
-    console.error('Error creating audit log:', error)
+    // Silent fail for audit logs
   }
 }
 
